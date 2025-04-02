@@ -52,11 +52,11 @@ public class AiAgentTemplateDTO {
     private Long creator;
 
     @Schema(description = "创建时间")
-    private String createdAt;
+    private String createdDate;
 
     @Schema(description = "更新者 ID")
     private Long updater;
 
     @Schema(description = "更新时间")
-    private String updatedAt;
+    private String updatedDate;
 }

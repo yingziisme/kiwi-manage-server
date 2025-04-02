@@ -6,5 +6,5 @@ import org.springframework.http.codec.ServerSentEvent;
 public interface BaseModelClient {
 
 
-    Flowable<ServerSentEvent<String>> getResponse(String userId, String requestId, String msg);
+    Flowable<ServerSentEvent<String>> getResponse(String userId, String requestId, String msg, String prompt);
 }

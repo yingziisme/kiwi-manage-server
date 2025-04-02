@@ -45,7 +45,7 @@ public class KiwiCommonController {
     @PostMapping("/captcha")
     @Operation(summary = "验证码")
     public void captcha(HttpServletResponse response, @RequestBody CaptchaDTO dto) throws IOException {
-        if (StringUtils.isEmpty(dto.getUuid())) {
+        if (StringUtils.isEmpty(dto.getCaptchaId())) {
             BaseResponse baseResponse = BaseResponse.buildFailureResponse("验证码错误，UUID为空", ErrorCode.PARAM_ERROR.getCode(), dto.getRequestId());
 
             String newResponseBody = JSON.toJSONString(baseResponse);
@@ -57,7 +57,7 @@ public class KiwiCommonController {
         }
 
         //生成验证码
-        captchaService.create(response, dto.getUuid());
+        captchaService.create(response, dto.getCaptchaId());
     }
 
     @PostMapping("/login")

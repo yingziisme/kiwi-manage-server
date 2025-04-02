@@ -59,11 +59,11 @@ public class AiAgentCreateReq extends BaseRequest {
     private Long creator;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Date createdDate;
 
     @Schema(description = "更新者 ID")
     private Long updater;
 
     @Schema(description = "更新时间")
-    private Date updatedAt;
+    private Date updatedDate;
 }

@@ -8,6 +8,7 @@ import com.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.*;
 import io.reactivex.Flowable;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -35,8 +36,8 @@ public class BigModelClient implements BaseModelClient {
     }
 
     @Override
-    public Flowable<ServerSentEvent<String>> getResponse(String userId, String requestId, String msg) {
-        ChatCompletionRequest chatCompletionRequest = buildChatCompletionRequest(requestId, msg);
+    public Flowable<ServerSentEvent<String>> getResponse(String userId, String requestId, String msg, String prompt) {
+        ChatCompletionRequest chatCompletionRequest = buildChatCompletionRequest(requestId, msg, prompt);
         ModelApiResponse sseModelApiResp = client.invokeModelApi(chatCompletionRequest);
         if (sseModelApiResp.isSuccess()) {
             AtomicBoolean isFirst = new AtomicBoolean(true);
@@ -65,8 +66,13 @@ public class BigModelClient implements BaseModelClient {
         return Flowable.empty();
     }
 
-    private ChatCompletionRequest buildChatCompletionRequest(String requestId, String msg) {
+    private ChatCompletionRequest buildChatCompletionRequest(String requestId, String msg, String prompt) {
         List<ChatMessage> messages = new ArrayList<>();
+        if (StringUtils.isNotBlank(prompt)) {
+            ChatMessage promptMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), prompt);
+            messages.add(promptMessage);
+        }
+
         ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(), msg);
         messages.add(chatMessage);
 

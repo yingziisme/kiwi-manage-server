@@ -7,6 +7,6 @@ import com.hikari.kiwi.common.dto.BaseRequest;
 @Data
 public class CaptchaDTO extends BaseRequest {
 
-    @Schema(description = "uuid")
-    private String uuid;
+    @Schema(description = "captcha")
+    private String captchaId;
 }

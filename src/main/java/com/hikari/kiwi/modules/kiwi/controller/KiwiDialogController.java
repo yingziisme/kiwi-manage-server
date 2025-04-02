@@ -1,5 +1,7 @@
 package com.hikari.kiwi.modules.kiwi.controller;
 
+import com.hikari.kiwi.modules.kiwi.dto.KiwiDialogMessageReq;
+import com.hikari.kiwi.modules.kiwi.service.KiwiDialogService;
 import io.reactivex.Flowable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,6 +30,9 @@ public class KiwiDialogController {
     @Autowired
     private ModelFactory modelFactory;
 
+    @Autowired
+    private KiwiDialogService kiwiDialogService;
+
 
     @PostMapping("/display")
     @Operation(summary = "语音播放")
@@ -37,12 +42,11 @@ public class KiwiDialogController {
 
     @PostMapping("/send")
     @Operation(summary = "发送信息")
-    public Flowable<ServerSentEvent<String>> send(@RequestBody KiwiDialogTestDTO dto) {
+    public Flowable<ServerSentEvent<String>> send(@RequestBody KiwiDialogMessageReq dto) {
 
         log.info("test req: {}", dto);
-        BigModelClient client = (BigModelClient) modelFactory.getModelClient(dto.getMode());
 
-        return client.getResponse(String.valueOf(dto.getTokenUserId()), dto.getRequestId(), dto.getMsg());
+        return kiwiDialogService.getResponse(dto);
 
     }
     @PostMapping(value = "/test", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -52,7 +56,7 @@ public class KiwiDialogController {
         log.info("test req: {}", dto);
         BigModelClient client = (BigModelClient) modelFactory.getModelClient(dto.getMode());
 
-        return client.getResponse(String.valueOf(dto.getTokenUserId()), dto.getRequestId(), dto.getMsg());
+        return client.getResponse(String.valueOf(dto.getTokenUserId()), dto.getRequestId(), dto.getMsg(), null);
     }
 
 
