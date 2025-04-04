@@ -3,6 +3,7 @@ package com.hikari.kiwi.modules.kiwi.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.hikari.kiwi.modules.sys.entity.UserComment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,8 @@ public class KiwiAiAgentServiceImpl implements KiwiAiAgentService {
     public BaseResponse<BasePageResponse<AiAgentDTO>> getAiAgentsByPage(KiwiAiAgentPageReq req) {
         LambdaQueryWrapper<AiAgentTemplate> wrapper = new LambdaQueryWrapper<>();
 
+        wrapper.orderByDesc(AiAgentTemplate::getCreateDate);
+
         Page<AiAgentTemplate> page = new Page<>(req.getPage(), req.getLimit());
         IPage<AiAgentTemplate> aiAgentPage = aiAgentTemplateDao.selectPage(page, wrapper);
         List<AiAgentTemplate> aiAgents = aiAgentPage.getRecords();
@@ -61,6 +64,7 @@ public class KiwiAiAgentServiceImpl implements KiwiAiAgentService {
             }
             wrapper1.in(AiAgentEntity::getAgentCode, map.keySet());
 
+            wrapper1.orderByDesc(AiAgentEntity::getCreateDate);
             List<AiAgentEntity> aiAgentEntities = aiAgentDao.selectList(wrapper1);
 
             if (!CollectionUtils.isEmpty(aiAgentEntities)) {

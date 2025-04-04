@@ -1,5 +1,8 @@
 package com.hikari.kiwi.modules.kiwi.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.hikari.kiwi.modules.agent.dao.AiAgentTemplateDao;
+import com.hikari.kiwi.modules.agent.entity.AiAgentTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +27,31 @@ public class KiwiDialogSettingServiceImpl implements KiwiDialogSettingService {
     @Autowired
     private AiAgentDao aiAgentDao;
 
+    @Autowired
+    private AiAgentTemplateDao aiAgentTemplateDao;
+
     @Override
     public BaseResponse<KiwiDialogSetting> findDialog(KiwiDialogSettingFindReq req) {
-        AiAgentEntity entity = aiAgentDao.selectById(req.getAgentId());
+        LambdaQueryWrapper<AiAgentEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(AiAgentEntity::getUserId, req.getTokenUserId());
+        wrapper.eq(AiAgentEntity::getAgentCode, req.getAgentCode());
+        AiAgentEntity entity = aiAgentDao.selectOne(wrapper);
+
+
         KiwiDialogSetting dto = new KiwiDialogSetting();
-        BeanUtils.copyProperties(entity, dto);
+        if (null == entity) {
+            LambdaQueryWrapper<AiAgentTemplate> wrapper1 = new LambdaQueryWrapper<>();
+            wrapper1.eq(AiAgentTemplate::getAgentCode, req.getAgentCode());
+            AiAgentTemplate aiAgentTemplate = aiAgentTemplateDao.selectOne(wrapper1);
+            if (null == aiAgentTemplate) {
+                return null;
+            }
+            dto.setId(System.currentTimeMillis());
+            BeanUtils.copyProperties(aiAgentTemplate, dto);
+        } else {
+            BeanUtils.copyProperties(entity, dto);
+        }
+
         return BaseResponse.buildSuccessResponse(req.getRequestId(), dto);
     }
 
@@ -45,6 +68,8 @@ public class KiwiDialogSettingServiceImpl implements KiwiDialogSettingService {
             aiAgentDao.insert(entity);
         } else {
             BeanUtils.copyProperties(req, entity);
+            entity.setUpdatedDate(new Date());
+            entity.setUpdater(req.getTokenUserId());
             aiAgentDao.updateById(entity);
         }
 

@@ -12,7 +12,7 @@ public class KiwiDialogSetting  {
 
 
     @Schema(description = "智能体唯一标识", required = true)
-    private String id;
+    private Long id;
 
     @Schema(description = "所属用户 ID")
     private Long userId;
@@ -60,7 +60,7 @@ public class KiwiDialogSetting  {
     private Long creator;
 
     @Schema(description = "创建时间")
-    private Date createdDate;
+    private Date createDate;
 
     @Schema(description = "更新者 ID")
     private Long updater;

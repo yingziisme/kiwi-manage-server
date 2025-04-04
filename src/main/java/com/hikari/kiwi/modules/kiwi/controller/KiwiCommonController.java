@@ -1,6 +1,7 @@
 package com.hikari.kiwi.modules.kiwi.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.hikari.kiwi.modules.utils.TokenUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.ServletOutputStream;
@@ -9,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.hikari.kiwi.common.constant.ErrorCode;
 import com.hikari.kiwi.common.dto.BaseResponse;
 import com.hikari.kiwi.common.page.TokenDTO;
@@ -41,12 +39,15 @@ public class KiwiCommonController {
     @Autowired
     private CaptchaService captchaService;
 
+    @Autowired
+    private TokenUtils tokenUtils;
 
-    @PostMapping("/captcha")
+
+    @GetMapping("/captcha")
     @Operation(summary = "验证码")
-    public void captcha(HttpServletResponse response, @RequestBody CaptchaDTO dto) throws IOException {
-        if (StringUtils.isEmpty(dto.getCaptchaId())) {
-            BaseResponse baseResponse = BaseResponse.buildFailureResponse("验证码错误，UUID为空", ErrorCode.PARAM_ERROR.getCode(), dto.getRequestId());
+    public void captcha(HttpServletResponse response, String captchaId) throws IOException {
+        if (StringUtils.isEmpty(captchaId)) {
+            BaseResponse baseResponse = BaseResponse.buildFailureResponse("验证码错误，UUID为空", ErrorCode.PARAM_ERROR.getCode(), captchaId);
 
             String newResponseBody = JSON.toJSONString(baseResponse);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -57,7 +58,7 @@ public class KiwiCommonController {
         }
 
         //生成验证码
-        captchaService.create(response, dto.getCaptchaId());
+        captchaService.create(response, captchaId);
     }
 
     @PostMapping("/login")
@@ -80,6 +81,7 @@ public class KiwiCommonController {
         }
         Result<TokenDTO> result = sysUserTokenService.createToken(userDTO.getId());
 
+        tokenUtils.setToken(result.getData().getToken(), userDTO.getId());
         return BaseResponse.buildSuccessResponse(login.getRequestId(), result.getData());
     }
     @PostMapping("/register")

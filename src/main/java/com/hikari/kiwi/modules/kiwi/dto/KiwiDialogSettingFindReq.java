@@ -8,6 +8,6 @@ import com.hikari.kiwi.common.dto.BaseRequest;
 @Schema(description = "对话设定查看")
 public class KiwiDialogSettingFindReq extends BaseRequest {
 
-    @Schema(description = "agentId")
-    private String agentId;
+    @Schema(description = "agentCode")
+    private String agentCode;
 }

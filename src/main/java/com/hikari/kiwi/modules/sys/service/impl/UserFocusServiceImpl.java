@@ -3,6 +3,7 @@ package com.hikari.kiwi.modules.sys.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.hikari.kiwi.modules.agent.entity.AiAgentEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +36,7 @@ public class UserFocusServiceImpl implements UserFocusService {
     public int addUserFocus(UserFocusCreateReq req) {
         UserFocus entity = new UserFocus();
         BeanUtils.copyProperties(req, entity);
+        entity.setCreator(req.getTokenUserId());
         return userFocusDao.insert(entity);
     }
 
@@ -45,6 +47,7 @@ public class UserFocusServiceImpl implements UserFocusService {
             return this.addUserFocus(req);
         }
         BeanUtils.copyProperties(req, entity);
+        entity.setUpdater(req.getTokenUserId());
         return userFocusDao.updateById(entity);
     }
 
@@ -77,7 +80,7 @@ public class UserFocusServiceImpl implements UserFocusService {
         if (req.getTokenUserId() != null) {
             wrapper.eq(UserFocus::getUserId, req.getTokenUserId());
         }
-
+        wrapper.orderByDesc(UserFocus::getCreateDate);
         Page<UserFocus> page = new Page<>(req.getPage(), req.getLimit());
         IPage<UserFocus> userFocusPage = userFocusDao.selectPage(page, wrapper);
         List<UserFocus> userFocuses = userFocusPage.getRecords();

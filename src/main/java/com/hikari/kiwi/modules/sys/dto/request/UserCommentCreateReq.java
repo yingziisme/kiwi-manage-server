@@ -13,8 +13,8 @@ import java.util.Date;
 @ToString(callSuper = true)
 public class UserCommentCreateReq extends BaseRequest {
 
-    @Schema(description = "所属用户 ID")
-    private Long userId;
+    @Schema(description = "回复的评论 ID")
+    private Long commentId;
     @Schema(description = "智能体编码")
     private String agentCode;
     @Schema(description = "父级评论的id")

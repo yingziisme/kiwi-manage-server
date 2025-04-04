@@ -31,6 +31,7 @@ public class UserCommentServiceImpl implements UserCommentService {
     public int addUserComment(UserCommentCreateReq req) {
         UserComment entity = new UserComment();
         BeanUtils.copyProperties(req, entity);
+        entity.setCreator(req.getTokenUserId());
         return userCommentDao.insert(entity);
     }
 
@@ -41,6 +42,7 @@ public class UserCommentServiceImpl implements UserCommentService {
             return this.addUserComment(req);
         }
         BeanUtils.copyProperties(req, entity);
+        entity.setUpdater(req.getTokenUserId());
         return userCommentDao.updateById(entity);
     }
 
@@ -61,9 +63,9 @@ public class UserCommentServiceImpl implements UserCommentService {
     @Override
     public BaseResponse<BasePageResponse<UserCommentDTO>> getCommentsByLevel(UserCommentLevelRequest req) {
         LambdaQueryWrapper<UserComment> wrapper = new LambdaQueryWrapper<>();
-        if (req.getTokenUserId() != null) {
-            wrapper.eq(UserComment::getUserId, req.getTokenUserId());
-        }
+        wrapper.eq(UserComment::getParentId, req.getParentId());
+
+        wrapper.orderByDesc(UserComment::getCreateDate);
 
         Page<UserComment> page = new Page<>(req.getPage(), req.getLimit());
         IPage<UserComment> aiAgentPage = userCommentDao.selectPage(page, wrapper);

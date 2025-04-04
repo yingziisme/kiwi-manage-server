@@ -32,15 +32,5 @@ public class SysUserEntity extends BaseEntity {
      * 状态  0：停用   1：正常
      */
     private Integer status;
-    /**
-     * 更新者
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Long updater;
-    /**
-     * 更新时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updateDate;
 
 }

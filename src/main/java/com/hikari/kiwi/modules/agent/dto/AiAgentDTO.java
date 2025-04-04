@@ -59,7 +59,7 @@ public class AiAgentDTO {
     private Long creator;
 
     @Schema(description = "创建时间")
-    private Date createdDate;
+    private Date createDate;
 
     @Schema(description = "更新者 ID")
     private Long updater;
