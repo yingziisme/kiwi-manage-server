@@ -44,9 +44,9 @@ public class BigModelClient implements BaseModelClient {
             StringBuilder message = new StringBuilder();
             return mapStreamToAccumulator(sseModelApiResp.getFlowable())
                     .map(accumulator -> {
-                        if (isFirst.getAndSet(false)) {
-                            message.append("Response: ");
-                        }
+//                        if (isFirst.getAndSet(false)) {
+//                            message.append("Response: ");
+//                        }
                         if (accumulator.getDelta() != null && accumulator.getDelta().getTool_calls() != null) {
                             try {
                                 String jsonString = mapper.writeValueAsString(accumulator.getDelta().getTool_calls());
@@ -57,6 +57,7 @@ public class BigModelClient implements BaseModelClient {
                         }
                         if (accumulator.getDelta() != null && accumulator.getDelta().getContent() != null) {
                             message.append(accumulator.getDelta().getContent());
+                            log.info("getResponse: {}", accumulator.getDelta().getContent());
                         }
                         return ServerSentEvent.<String>builder()
                                 .data(message.toString())
@@ -107,7 +108,7 @@ public class BigModelClient implements BaseModelClient {
         HashMap<String, Object> extraJson = new HashMap<>();
 
         // 随机性
-        extraJson.put("temperature", 0.5);
+        extraJson.put("temperature", 0.75);
         // 控制生成的响应的最大 token 数量
         extraJson.put("max_tokens", 2048);
 
@@ -117,7 +118,7 @@ public class BigModelClient implements BaseModelClient {
                 .messages(messages)
                 .requestId(requestId)
 //                .tools(chatToolList)
-                .toolChoice("auto")
+//                .toolChoice("auto")
                 .extraJson(extraJson)
                 .build();
     }

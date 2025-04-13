@@ -10,10 +10,10 @@ import java.util.List;
 public class BaseRequest {
 
     @Schema(description = "用户id", hidden = true)
-    @JsonIgnore
+    //@JsonIgnore
     private Long tokenUserId = 1L;
 
     @Schema(description = "请求id", hidden = true)
-    @JsonIgnore
+    //@JsonIgnore
     private String requestId = "1";
 }

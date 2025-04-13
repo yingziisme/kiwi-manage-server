@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Slf4j
 @Service
 public class KiwiDialogServiceImpl implements KiwiDialogService {
@@ -47,6 +49,9 @@ public class KiwiDialogServiceImpl implements KiwiDialogService {
             entity = new AiAgentEntity();
             BeanUtils.copyProperties(aiAgentTemplate, entity);
             entity.setId(System.currentTimeMillis());
+            entity.setCreateDate(new Date());
+            entity.setCreator(dto.getTokenUserId());
+            entity.setUserId(dto.getTokenUserId());
             aiAgentDao.insert(entity);
         }
 
